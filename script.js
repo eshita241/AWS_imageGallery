@@ -52,10 +52,10 @@ const createDomElements = (page) => {
         const saveText = document.createElement('p');
         saveText.classList.add('clickable');
         if(page==='results') {
-        saveText.textContent = 'Add To Favorites';
+        saveText.textContent = '❤️';
         saveText.setAttribute('onclick', `saveFavorites('${el.url}')`);
         } else {
-            saveText.textContent = 'Remove Favorites';
+            saveText.textContent = '❌';
             saveText.setAttribute('onclick', `removeFavorites('${el.url}')`);
         }
         //Card text
@@ -106,12 +106,12 @@ const saveFavorites = itemUrl => {
     resultsArray.forEach((item) => {
         if(item.url.includes(itemUrl) && !favorites[itemUrl]) {
             favorites[itemUrl] = item;
-            //show save confirmation for 2s
-            saveConfirmed.hidden = false;
+            // Show the save confirmation for 2 seconds with animation
+            saveConfirmed.classList.add('show');
             setTimeout(() => {
-                saveConfirmed.hidden = true;
+                saveConfirmed.classList.remove('show');
             }, 2000);
-            //save in local storage
+            // Save in local storage
             localStorage.setItem('nasaFavorites', JSON.stringify(favorites));
         }
     });

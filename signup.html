@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Sign-Up</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+
+<body>
+    <div class="signup-container">
+        <div class="signup-box">
+            <h1>User Sign-Up</h1>
+            <form id="signupForm">
+                <div class="input-group">
+                    <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="signupPassword" placeholder="Enter your password" required>
+                </div>
+                <button type="button" class="btn" onclick="signup()">Sign Up</button>
+                <div id="signupStatus"></div>
+            </form>
+            <p>Already have an account? <a href="login.html">Login Here</a></p>
+        </div>
+    </div>
+    <script>
+        function signup() {
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            if (email && password) {
+                // Save user credentials to localStorage (mock database)
+                localStorage.setItem("userEmail", email);
+                localStorage.setItem("userPassword", password);
+
+                document.getElementById('signupStatus').innerText = "Sign-Up successful! Redirecting to login...";
+                setTimeout(() => {
+                    window.location.href = "login.html";
+                }, 1000);
+            } else {
+                document.getElementById('signupStatus').innerText = "Please fill in all fields.";
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="name">
+            <h1>User Profile</h1>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profileContainer" style="text-align: center; margin-top: 20px;">
+            <div id="profilePicContainer">
+                <img id="profilePic" src="default-icon.png" alt="Profile Icon" style="width: 100px; height: 100px; border-radius: 50%;">
+            </div>
+            <p>Email: <span id="userEmail"></span></p>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+    <script>
+        // Check if the user is logged in
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+        const userEmail = localStorage.getItem("userEmail");
+        const profilePic = localStorage.getItem("profilePic"); // Retrieve profile picture from localStorage
+
+        if (isLoggedIn) {
+            document.getElementById("userEmail").innerText = userEmail;
+
+            // If the user has uploaded a profile picture, display it
+            if (profilePic) {
+                document.getElementById("profilePic").src = profilePic; // Update profile picture to the stored image
+            }
+        } else {
+            window.location.href = "login.html"; // Redirect to login if not logged in
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.clear();
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+
+</html>

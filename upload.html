@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="https://s2.googleusercontent.com/s2/favicons?domain=www.nasa.gov">
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1313.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* Navigation */
+        .navigation-container {
+            display: flex;
+            justify-content: center;
+            padding: 15px 0;
+        }
+
+        .navigation-items a {
+            color: rgb(163, 11, 163);
+            font-size: 30px;
+            font-weight: 500;
+            margin: 0 15px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .navigation-items a:hover {
+            color: #f39c12;
+        }
+
+        /* Page Title */
+        .name h1 {
+            color: #34495e;
+            font-size: 36px;
+            margin-top: 50px;
+        }
+
+        /* Upload Section */
+        #uploadContainer {
+            margin: 30px 0;
+        }
+
+        #fileInput {
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #bdc3c7;
+            font-size: 16px;
+            margin-right: 10px;
+            width: 250px;
+            background-color: #ecf0f1;
+        }
+
+        #uploadContainer button {
+            padding: 12px 25px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #uploadContainer button:hover {
+            background-color: #3498db;
+        }
+
+        /* Status Messages */
+        #uploadStatus {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        .upload-success {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .upload-failed {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        /* Uploaded Images Section */
+        #uploadedImages h2 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #34495e;
+        }
+
+        #imagesContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            justify-items: center;
+            margin-top: 20px;
+        }
+
+        #imagesContainer img {
+            max-width: 100%;
+            border-radius: 10px;
+            border: 3px solid #ecf0f1;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #imagesContainer img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #f1c40f;
+            padding: 15px;
+            font-size: 14px;
+            margin-top: 50px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <div class="navigation-container">
+            <span class="navigation-items">
+                <a href="index.html">Home</a>
+                <span>•</span>
+                <a href="upload.html">Upload Image</a>
+            </span>
+        </div>
+
+        <!-- Page Title -->
+        <div class="name">
+            <h1>Upload an Image to Favorites</h1>
+        </div>
+
+        <!-- Upload Container -->
+        <div id="uploadContainer">
+            <input type="file" id="fileInput" accept="image/*" />
+            <button onclick="uploadImage()">Upload Image</button>
+        </div>
+        <div id="uploadStatus"></div>
+
+        <!-- Uploaded Images Section -->
+        <div id="uploadedImages">
+            <h2>Uploaded Images</h2>
+            <div id="imagesContainer"></div>
+        </div>
+    </div>
+
+    <footer>
+        Copyright &copy; 2023 || NASA's Descriptive Photo Gallery
+    </footer>
+
+    <script>
+        AWS.config.update({
+            region: 'us-east-1',
+            accessKeyId: 'AKIAZDZTB2SR2MLUTDPP',
+            secretAccessKey: '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'
+        });
+
+        const s3 = new AWS.S3();
+
+        function uploadImage() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select a file!');
+                return;
+            }
+
+            const params = {
+                Bucket: 'imagegellerybucket',
+                Key: file.name,
+                Body: file,
+                ACL: 'public-read',
+                ContentType: file.type
+            };
+
+            s3.upload(params, function (err, data) {
+                const uploadStatus = document.getElementById('uploadStatus');
+                if (err) {
+                    console.log(err);
+                    uploadStatus.innerHTML = '<p class="upload-failed">Upload Failed. Please try again.</p>';
+                } else {
+                    console.log(data);
+                    uploadStatus.innerHTML = `<p class="upload-success">Image uploaded successfully! 
+                        <a href="${data.Location}" target="_blank">View Image</a></p>`;
+                    displayImage(data.Location);
+                }
+            });
+        }
+
+        function displayImage(imageUrl) {
+            const imagesContainer = document.getElementById('imagesContainer');
+
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = "Uploaded Image";
+
+            imagesContainer.appendChild(img);
+        }
+    </script>
+</body>
+
+</html>
